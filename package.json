@@ -1,0 +1,21 @@
+{
+  "name": "threejs-base-template",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "deploy": "vercel deploy --prod",
+    "vercel-login": "vercel --login"
+  },
+  "devDependencies": {
+    "vite": "^4.5.5"
+  },
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "lil-gui": "^0.20.0",
+    "three": "^0.158.0",
+    "vercel": "^37.14.0"
+  }
+}
