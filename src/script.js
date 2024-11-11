@@ -2,6 +2,8 @@
 import { scene, cameras, windowEvents, controls, tick, gui } from "./scripts";
 import { testObject, loadText } from "./objects";
 
+//here be dragons!!!
+
 //camera
 const camera = cameras["perspectiveCamera"];
 camera.position.z = 5;
