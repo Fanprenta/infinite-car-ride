@@ -1,4 +1,4 @@
-# Three.js Journey
+# Three.js Base Template
 
 ## Setup
 
