@@ -1,8 +1,6 @@
 //app lives here
 import { scene, cameras, windowEvents, controls, tick, gui } from "./scripts";
-import { testObject, loadText } from "./objects";
-
-//here be dragons!!!
+import { Car } from "./objects";
 
 //camera
 const camera = cameras["perspectiveCamera"];
@@ -13,37 +11,52 @@ scene.add(camera);
 controls("orbitControls");
 
 //objects
-scene.add(testObject);
-loadText("helvetiker_regular", "Base Project", (text) => {
-  // text.center;
-  text.position.set(-1.8, -1.4, -0.4);
-  const textFolder = gui.addFolder("Text");
-
-  textFolder
-    .add(text.position, "x")
-    .min(-5)
-    .max(5)
-    .step(0.2)
-    .name("position-x");
-  textFolder
-    .add(text.position, "y")
-    .min(-5)
-    .max(5)
-    .step(0.2)
-    .name("position-y");
-  textFolder
-    .add(text.position, "z")
-    .min(-5)
-    .max(5)
-    .step(0.2)
-    .name("position-z");
-
-  scene.add(text);
-});
+const carConfig = {
+  wheel: {
+    radius: 0.4,
+    color: "grey",
+  },
+  chassis: {
+    size: {
+      x: 2,
+      y: 0.25,
+      z: 4,
+    },
+    color: "orange",
+  },
+  bodywork: {
+    roof: {
+      x: 2,
+      y: 0.2,
+      z: 1.5,
+    },
+    sides: {
+      x: 2,
+      y: 0.5,
+      z: 4,
+    },
+    connector: {
+      x: 0.2,
+      y: 1,
+      z: 0.2,
+    },
+    color: "blue",
+  },
+  windshield: {
+    sizes: {
+      x: 1.75,
+      y: 0.05,
+      z: 0.3,
+    },
+    color: "white",
+  },
+};
+const car = new Car(carConfig);
+scene.add(car);
 
 //animation
 tick((delta) => {
-  testObject.rotation.y = delta;
+  car.rotation.y = delta;
 });
 
 //resize, fullscreen, gui

@@ -1,4 +1,3 @@
-import { testObject } from "./testObject";
-import { loadText } from "./testText";
+import { Car } from "./car";
 
-export { testObject, loadText };
+export { Car };
