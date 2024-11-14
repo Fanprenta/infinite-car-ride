@@ -1,6 +1,7 @@
 //app lives here
 import { scene, cameras, windowEvents, controls, tick, gui } from "./scripts";
-import { Car } from "./objects";
+import { Car, testObject } from "./objects";
+import _ from "lodash";
 
 //camera
 const camera = cameras["perspectiveCamera"];
@@ -11,52 +12,41 @@ scene.add(camera);
 controls("orbitControls");
 
 //objects
-const carConfig = {
-  wheel: {
-    radius: 0.4,
-    color: "grey",
-  },
-  chassis: {
-    size: {
-      x: 2,
-      y: 0.25,
-      z: 4,
-    },
-    color: "orange",
-  },
-  bodywork: {
-    roof: {
-      x: 2,
-      y: 0.2,
-      z: 1.5,
-    },
-    sides: {
-      x: 2,
-      y: 0.5,
-      z: 4,
-    },
-    connector: {
-      x: 0.2,
-      y: 1,
-      z: 0.2,
-    },
-    color: "blue",
-  },
-  windshield: {
-    sizes: {
-      x: 1.75,
-      y: 0.05,
-      z: 0.3,
-    },
-    color: "white",
-  },
-};
-const car = new Car(carConfig);
-scene.add(car);
+
+const car = new Car();
+//car.rotation.y = Math.PI / 2;
+// const anotherCar = new Car({
+//   chassis: {
+//     color: "rgb(0,128,128)",
+//   },
+//   bodywork: {
+//     color: "rgb(255,72,72)",
+//   },
+// });
+// anotherCar.position.x = 5;
+car.rotation.y = Math.PI / 2;
+testObject.position.x = 10;
+//const obj2 = testObject.clone();
+
+const car2 = new Car();
+const car3 = new Car();
+const car4 = new Car();
+const car5 = new Car();
+
+scene.add(car, testObject, car2, car3, car4, car5);
+car2.rotation.y = Math.PI / 2;
+car3.rotation.y = Math.PI / 2;
+car4.rotation.y = Math.PI / 2;
+car5.rotation.y = Math.PI / 2;
+car2.position.set(8, 0, -3);
 
 //animation
 tick((delta) => {
-  car.rotation.y = delta;
+  car.position.x = delta * 5;
+  camera.position.set(..._.values(car.position));
+  camera.position.y += 0.75;
+  camera.rotation.y = -0.5 * Math.PI;
+  camera.updateProjectionMatrix();
 });
 
 //resize, fullscreen, gui

@@ -1,3 +1,4 @@
 import { Car } from "./car";
+import { testObject } from "./testObject";
 
-export { Car };
+export { Car, testObject };

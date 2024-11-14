@@ -5,10 +5,10 @@ debug.testObject = {
 };
 
 export const testObject = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1, 22, 22, 22),
-  new THREE.MeshBasicMaterial({
+  new THREE.BoxGeometry(1, 10, 1, 22, 22, 22),
+  new THREE.MeshToonMaterial({
     color: debug.testObject.color,
-    map: colorTexture,
+    //map: colorTexture,
   })
 );
 

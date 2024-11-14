@@ -1,14 +1,62 @@
 import * as THREE from "three";
-import { gui, debug } from "../scripts";
+import { gui } from "../scripts";
+import _ from "lodash";
+import { scene } from "../scripts";
 
 export class Car {
-  constructor(config) {
-    return this.#build({
-      wheels: this.#buildWheel(config.wheel),
-      chassis: this.#buildChassis(config.chassis),
-      bodywork: this.#buildBodywork(config.bodywork),
-      windshields: this.#buildWindshield(config.windshield),
-    });
+  #defaults = {
+    wheel: {
+      radius: 0.4,
+      color: "grey",
+    },
+    chassis: {
+      size: {
+        x: 2,
+        y: 0.25,
+        z: 4,
+      },
+      color: "orange",
+    },
+    bodywork: {
+      roof: {
+        x: 2,
+        y: 0.2,
+        z: 1.5,
+      },
+      sides: {
+        x: 2,
+        y: 0.5,
+        z: 4,
+      },
+      connector: {
+        x: 0.2,
+        y: 1,
+        z: 0.2,
+      },
+      color: "blue",
+    },
+    windshield: {
+      sizes: {
+        x: 1.75,
+        y: 0.05,
+        z: 0.3,
+      },
+      color: "white",
+    },
+    lights: {
+      sizes: { radius: 0.15625, height: 0.125 },
+      color: "purple",
+    },
+  };
+  constructor(config = {}) {
+    config = _.merge(this.#defaults, config);
+    return this.#build([
+      this.#buildWheel(config.wheel),
+      this.#buildChassis(config.chassis),
+      this.#buildBodywork(config.bodywork),
+      this.#buildWindshield(config.windshield),
+      this.#buildLights(config.lights),
+    ]);
   }
 
   #buildWheel = ({ radius, color }) => {
@@ -148,10 +196,9 @@ export class Car {
     const material = new THREE.MeshBasicMaterial({
       color,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.25,
     });
 
-    //const windshieldGeometry = new THREE.BoxGeometry(sizes.x, sizes.y, sizes.z);
     const windshieldParts = {
       front: [0, 0.75, -0.72],
       right: [0.95, 0.75, 0.05],
@@ -185,18 +232,69 @@ export class Car {
 
     return windshields;
   };
-  #build = ({ wheels, chassis, bodywork, windshields }) => {
+  #buildLights = ({ sizes, color }) => {
+    const geometry = new THREE.CylinderGeometry(
+      sizes.radius,
+      sizes.radius,
+      sizes.height
+    );
+    const material = new THREE.MeshBasicMaterial({ color });
+
+    const lightsParts = {
+      left: [0.7, 2],
+      right: [-0.7, 2],
+    };
+
+    _.keys(lightsParts).map((part) => {
+      const light = new THREE.Mesh(geometry, material);
+      light.position.x = lightsParts[part][0];
+      light.position.y = 0.35;
+      light.position.z = lightsParts[part][1];
+      light.rotation.x = Math.PI * 0.5;
+      //pointLight
+      const spotLight = new THREE.SpotLight(0xffffff, 300);
+      spotLight.angle = Math.PI / 2;
+      spotLight.castShadow = true;
+      // const spotLightsFolder = gui.addFolder("spotLights");
+      // spotLightsFolder
+      //   .add(spotLight, "angle")
+      //   .min(Math.PI / 3)
+      //   .max(Math.PI * 2)
+      //   .step(Math.PI / 3)
+      //   .onFinishChange(() => {
+      //     spotLight.updateMatrixWorld();
+      //     spotLight.updateMatrixWorld();
+      //   })
+      //   .name("angle");
+
+      spotLight.position.set(
+        light.position.x,
+        light.position.y,
+        light.position.z
+      );
+
+      spotLight.target.position.set(
+        spotLight.position.x + 1,
+        spotLight.position.y + 1,
+        spotLight.position.z + 1
+      );
+
+      light.add(spotLight);
+      light.add(spotLight.target);
+      lightsParts[part] = light;
+    });
+
+    const lights = new THREE.Group();
+    lights.add(..._.values(lightsParts));
+
+    return lights;
+  };
+
+  #build = (parts) => {
     //group everything
     const car = new THREE.Group();
-    car.add(wheels, chassis, bodywork, windshields);
+    car.add(...parts);
 
     return car;
   };
-
-  //   #placeAt = ({ object, target, type, objectPart, targetPart }) => {
-  //     //object center at the right corner of target
-  //     //type: translate
-  //     //objectPart: objectWidth / 2 , objectHeight / 2, objectDepth / 2 //OR USE FRUSTUM
-  //     //targetPart: objectDepth /
-  //   };
 }
