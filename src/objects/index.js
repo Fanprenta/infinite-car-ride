@@ -1,4 +1,5 @@
-import { Car } from "./car";
+import { Car } from "./Car/Car";
 import { testObject } from "./testObject";
+import { RealObject } from "./RealObject";
 
-export { Car, testObject };
+export { Car, testObject, RealObject };

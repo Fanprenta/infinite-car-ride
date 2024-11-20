@@ -4,6 +4,7 @@ import { scene, sizes, canvas } from "./index";
 //renderer
 export const renderer = new THREE.WebGLRenderer({
   canvas,
+  antialias: true,
 });
 
 export const render = (camera) => {

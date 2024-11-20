@@ -1,6 +1,16 @@
 //app lives here
-import { scene, cameras, windowEvents, controls, tick, gui } from "./scripts";
-import { Car, testObject } from "./objects";
+import * as THREE from "three";
+import {
+  scene,
+  cameras,
+  windowEvents,
+  controls,
+  tick,
+  gui,
+  debug,
+} from "./scripts";
+import { Car } from "./objects/Car/Car";
+import { Light } from "./objects/Car/Light";
 import _ from "lodash";
 
 //camera
@@ -12,41 +22,60 @@ scene.add(camera);
 controls("orbitControls");
 
 //objects
+const car = new Car({
+  bodywork: {
+    side: { y: 0.75, z: 3.8 },
+    bodyworkCabin: { connector: { y: 0.9, x: 0.15 } },
+    headLight: {
+      intensity: 0,
+    },
+  },
+  chassis: {
+    bottomPlate: {
+      // z: 3.5,
+    },
+    wheel: {
+      hubCap: { x: 0.25, color: new THREE.Color("rgb(73,73,73)") },
+      tire: { x: 0.35 },
+    },
+    transmissionShaft: {
+      color: "green",
+    },
+  },
+});
 
-const car = new Car();
-//car.rotation.y = Math.PI / 2;
-// const anotherCar = new Car({
-//   chassis: {
-//     color: "rgb(0,128,128)",
-//   },
-//   bodywork: {
-//     color: "rgb(255,72,72)",
-//   },
-// });
-// anotherCar.position.x = 5;
-car.rotation.y = Math.PI / 2;
-testObject.position.x = 10;
-//const obj2 = testObject.clone();
+car.mesh.rotation.y = Math.PI * 1.7;
 
-const car2 = new Car();
-const car3 = new Car();
-const car4 = new Car();
-const car5 = new Car();
+gui
+  .add(car.mesh.rotation, "y")
+  .min(0)
+  .max(Math.PI * 2)
+  .step(Math.PI * 0.125)
+  .name("car-rotation");
 
-scene.add(car, testObject, car2, car3, car4, car5);
-car2.rotation.y = Math.PI / 2;
-car3.rotation.y = Math.PI / 2;
-car4.rotation.y = Math.PI / 2;
-car5.rotation.y = Math.PI / 2;
-car2.position.set(8, 0, -3);
+scene.add(car.mesh);
+
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16].map((val) => {
+  const sphere = new THREE.Mesh(
+    new THREE.SphereGeometry(0.5),
+    new THREE.MeshToonMaterial({ color: "blue" })
+  );
+  sphere.position.x = Math.cos(Math.PI * 0.125 * val) * 5;
+  sphere.position.z = Math.sin(Math.PI * 0.125 * val) * 5;
+
+  scene.add(sphere);
+});
+
+const sphere = new THREE.Mesh(
+  new THREE.SphereGeometry(1),
+  new THREE.MeshToonMaterial({ color: "blue" })
+);
 
 //animation
 tick((delta) => {
-  car.position.x = delta * 5;
-  camera.position.set(..._.values(car.position));
-  camera.position.y += 0.75;
-  camera.rotation.y = -0.5 * Math.PI;
-  camera.updateProjectionMatrix();
+  const coords = car.run(delta);
+  // camera.position.set(Math.cos(delta * 2) * 3, 1, Math.sin(delta * 2) * 3);
+  // camera.rotation.y = -delta * 2;
 });
 
 //resize, fullscreen, gui
